@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Train / Test 성능 그래프</title>
+  <style>
+    @page { size: A4 portrait; margin: 0; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #ececec; color: #111; font-family: Arial, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+    body { padding: 18px 0 40px; }
+    .toolbar {
+      position: sticky; top: 10px; z-index: 10; width: 210mm; margin: 0 auto 12px;
+      padding: 10px 14px; display: flex; align-items: center; gap: 12px;
+      background: #fff; border: 1px solid #bbb; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .toolbar button { padding: 8px 14px; border: 1px solid #222; background: #222; color: #fff; cursor: pointer; }
+    .toolbar span { font-size: 12px; color: #555; }
+    .toolbar label { margin-left: auto; font-size: 12px; }
+    .toolbar input { width: 120px; vertical-align: middle; }
+    .page {
+      width: 210mm; min-height: 297mm; margin: 0 auto 14px; padding: 18mm 17mm;
+      background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.12); overflow: hidden;
+      break-after: page; page-break-after: always;
+    }
+    .page:last-child { break-after: auto; page-break-after: auto; }
+    .document-title { margin: 0; font-size: 25px; font-weight: 700; letter-spacing: -.4px; }
+    .author { margin: 8px 0 22px; font-size: 13px; }
+    h1 { margin: 0 0 8px; padding-bottom: 8px; font-size: 20px; border-bottom: 1px solid #222; }
+    h2 { margin: 18px 0 8px; font-size: 15px; }
+    .graph-wrap { margin: 0 0 4mm; border: 1px solid #ccc; padding: 6px; text-align: center; break-inside: avoid; }
+    .graph-wrap img { display: block; width: 92%; height: auto; margin: 0 auto; cursor: pointer; }
+    .graph-wrap img.selected { outline: 2px solid #111; outline-offset: 3px; }
+    .metrics { width: 100%; margin: 0 0 9mm; border-collapse: collapse; font-size: 10px; break-inside: avoid; }
+    .metrics th, .metrics td { padding: 5px 6px; border: 1px solid #ccc; text-align: center; }
+    .metrics th { background: #f1f1f1; font-weight: 700; }
+    .metrics td:first-child { text-align: left; font-weight: 600; }
+    .model-dot { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 50%; }
+    @media print {
+      html, body { background: #fff; }
+      body { padding: 0; }
+      .toolbar { display: none !important; }
+      .page { margin: 0; box-shadow: none; }
+      .graph-wrap img.selected { outline: none; }
+    }
+  </style>
+</head>
+<body contenteditable="true">
+  <div class="toolbar" contenteditable="false">
+    <button type="button" onclick="window.print()">PDF로 저장</button>
+    <span>본문을 클릭하면 직접 수정할 수 있습니다.</span>
+    <label>이미지 크기 <input id="imageScale" type="range" min="30" max="100" value="100" disabled></label>
+  </div>
+
+  <section class="page">
+    <div class="document-title">Train / Test 성능 그래프</div>
+    <div class="author">P023 장현진</div>
+
+    <h1>Vanilla CNN → 실험 7</h1>
+    <h2>Vanilla CNN Baseline — Conv2D(8), Sigmoid, SGD</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_00_vanilla.png" alt="Vanilla CNN Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#1f77b4"></span>Vanilla CNN</td><td>0.753</td><td>0.757</td><td>-0.005</td></tr>
+    </tbody></table>
+
+    <h2>Vanilla CNN vs 실험 1 — Conv 레이어 3개(8 → 8 → 8)</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_01_experiment1.png" alt="실험 1 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#1f77b4"></span>Vanilla CNN</td><td>0.753</td><td>0.757</td><td>-0.005</td></tr>
+      <tr><td><span class="model-dot" style="background:#ff7f0e"></span>실험 1</td><td>0.099</td><td>0.105</td><td>-0.006</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="page">
+    <h2>실험 1 vs 실험 2 — MaxPooling2D 추가</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_02_experiment2.png" alt="실험 2 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#ff7f0e"></span>실험 1</td><td>0.099</td><td>0.105</td><td>-0.006</td></tr>
+      <tr><td><span class="model-dot" style="background:#2ca02c"></span>실험 2</td><td>0.736</td><td>0.724</td><td>0.012</td></tr>
+    </tbody></table>
+
+    <h2>실험 2 vs 실험 3 — Conv 필터 증가(8 → 16 → 32)</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_03_experiment3.png" alt="실험 3 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#2ca02c"></span>실험 2</td><td>0.736</td><td>0.724</td><td>0.012</td></tr>
+      <tr><td><span class="model-dot" style="background:#d62728"></span>실험 3</td><td>0.099</td><td>0.105</td><td>-0.006</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="page">
+    <h2>실험 3 vs 실험 4 — MaxPooling2D + Adam Optimizer</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_04_experiment4.png" alt="실험 4 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#d62728"></span>실험 3</td><td>0.099</td><td>0.105</td><td>-0.006</td></tr>
+      <tr><td><span class="model-dot" style="background:#9467bd"></span>실험 4</td><td>0.805</td><td>0.804</td><td>0.001</td></tr>
+    </tbody></table>
+
+    <h2>실험 4 vs 실험 5 — Conv(8 → 16 → 32) + Dense(32 → 16), ReLU</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_05_experiment5.png" alt="실험 5 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#9467bd"></span>실험 4</td><td>0.805</td><td>0.804</td><td>0.001</td></tr>
+      <tr><td><span class="model-dot" style="background:#8c564b"></span>실험 5</td><td>0.959</td><td>0.856</td><td>0.103</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="page">
+    <h2>실험 5 vs 실험 6 — BatchNormalization + MaxPooling2D, Epochs 30</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_06_experiment6.png" alt="실험 6 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#8c564b"></span>실험 5</td><td>0.959</td><td>0.856</td><td>0.103</td></tr>
+      <tr><td><span class="model-dot" style="background:#e377c2"></span>실험 6</td><td>0.976</td><td>0.851</td><td>0.125</td></tr>
+    </tbody></table>
+
+    <h2>실험 6 vs 실험 7 — Conv 블록 + BatchNorm + Dropout + EarlyStopping</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_07_experiment7.png" alt="실험 7 Train Test Loss Accuracy 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#e377c2"></span>실험 6</td><td>0.976</td><td>0.851</td><td>0.125</td></tr>
+      <tr><td><span class="model-dot" style="background:#7f7f7f"></span>실험 7</td><td>0.958</td><td>0.894</td><td>0.064</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="page">
+    <h1>전체 누적 성능 그래프</h1>
+    <h2>Vanilla CNN + 실험 1~7 전체 비교</h2>
+    <div class="graph-wrap">
+      <img src="outputs/plot_history_08_overall.png" alt="Vanilla CNN과 실험 1~7 전체 Train Test Loss Accuracy 누적 그래프">
+    </div>
+    <table class="metrics"><thead><tr><th>모델</th><th>Train Acc</th><th>Test Acc</th><th>격차</th></tr></thead><tbody>
+      <tr><td><span class="model-dot" style="background:#1f77b4"></span>Vanilla CNN</td><td>0.753</td><td>0.757</td><td>-0.005</td></tr>
+      <tr><td><span class="model-dot" style="background:#ff7f0e"></span>실험 1</td><td>0.099</td><td>0.105</td><td>-0.006</td></tr>
+      <tr><td><span class="model-dot" style="background:#2ca02c"></span>실험 2</td><td>0.736</td><td>0.724</td><td>0.012</td></tr>
+      <tr><td><span class="model-dot" style="background:#d62728"></span>실험 3</td><td>0.099</td><td>0.105</td><td>-0.006</td></tr>
+      <tr><td><span class="model-dot" style="background:#9467bd"></span>실험 4</td><td>0.805</td><td>0.804</td><td>0.001</td></tr>
+      <tr><td><span class="model-dot" style="background:#8c564b"></span>실험 5</td><td>0.959</td><td>0.856</td><td>0.103</td></tr>
+      <tr><td><span class="model-dot" style="background:#e377c2"></span>실험 6</td><td>0.976</td><td>0.851</td><td>0.125</td></tr>
+      <tr><td><span class="model-dot" style="background:#7f7f7f"></span>실험 7</td><td>0.958</td><td>0.894</td><td>0.064</td></tr>
+    </tbody></table>
+  </section>
+
+  <script>
+    (() => {
+      const slider = document.getElementById('imageScale');
+      let selectedImage = null;
+
+      document.addEventListener('click', (event) => {
+        if (event.target.tagName !== 'IMG') return;
+        document.querySelectorAll('img.selected').forEach((img) => img.classList.remove('selected'));
+        selectedImage = event.target;
+        selectedImage.classList.add('selected');
+        slider.disabled = false;
+        slider.value = Math.round(parseFloat(selectedImage.style.width || '100'));
+      });
+
+      slider.addEventListener('input', () => {
+        if (selectedImage) selectedImage.style.width = `${slider.value}%`;
+      });
+
+      document.addEventListener('paste', (event) => {
+        const imageItem = Array.from(event.clipboardData?.items || []).find((item) => item.type.startsWith('image/'));
+        if (!imageItem) return;
+        event.preventDefault();
+        const reader = new FileReader();
+        reader.onload = () => {
+          const image = document.createElement('img');
+          image.src = reader.result;
+          image.alt = '붙여넣은 그래프 캡처';
+          image.style.width = '100%';
+          const selection = window.getSelection();
+          const target = selection?.anchorNode?.parentElement?.closest('.graph-wrap') || document.querySelector('.graph-wrap');
+          target.replaceChildren(image);
+        };
+        reader.readAsDataURL(imageItem.getAsFile());
+      });
+    })();
+  </script>
+</body>
+</html>

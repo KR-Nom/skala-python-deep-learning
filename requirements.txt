@@ -1,0 +1,14 @@
+numpy
+pandas
+seaborn
+matplotlib
+scikit-learn
+xgboost
+lightgbm
+pycaret
+lazypredict
+
+torch
+torchvision
+transformers
+datasets
